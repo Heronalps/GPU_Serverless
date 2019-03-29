@@ -4,9 +4,9 @@
 
 ``` docker login ```
 
-2. Under iron-io directory, run Iron Function in single server mode. This command is hard to run as background process. (TODO)
+2. In another terminal (process) under iron-io directory, run Iron Function in single server mode. This command is hard to run as background process. (TODO)
 
-``` sh function.sh ```
+``` sh server.sh ```
 
 3. Create app and routes
 
@@ -28,6 +28,10 @@ path	image	endpoint
 ```fn run <image-name>```
 Hello World!
 
+```fn run ```
+Image name can be ignored if executing in function's directory. In this sense, ```fn run``` is essentially ```docker run --rm```
+
+7. Put a Dockerfile in the directory of func.xx if it's required
 
 
 gotchas:
@@ -41,4 +45,11 @@ No list
 path	image	endpoint
 /hello	iron/hello
 
+Iron function use ``` docker images ``` to build apps. The default image is ```iron/<path>```
 
+
+- ``` fn init -f --runtime python heronalps/hello ```
+runtime needs whole name (python, ruby, golang)
+
+- ``` sh server.sh ```
+You have to run ``` docker rm functions ``` every time restart a single mode server

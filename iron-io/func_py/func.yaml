@@ -1,0 +1,5 @@
+name: heronalps/hello
+version: 0.0.1
+path: /hello
+build:
+- docker run --rm -v "$PWD":/worker -w /worker iron/python:3-dev pip install -t packages -r requirements.txt
