@@ -1,0 +1,5 @@
+name: heronalps/tf
+version: 0.0.1
+path: /tf
+build:
+- docker run --rm -v "$PWD":/worker -w /worker --runtime=nvidia tensorflow/tensorflow:latest-gpu-py3
