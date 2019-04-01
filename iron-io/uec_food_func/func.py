@@ -2,12 +2,9 @@ import os, shlex, time, sys, json
 from subprocess import Popen, PIPE
 
 # traverse UECFOOD100
-if not os.isatty(sys.stdin.fileno()):
-	obj = json.loads(sys.stdin.read())
-	if obj["total"] != "":
-		TOTAL = obj["total"]
 
 root_dir = './UECFOOD100'
+TOTAL = 10
 
 # run python3 filter.py <src> ./UECFOOD100_filter/<dest>
 start = time.time()
