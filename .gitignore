@@ -1,5 +1,7 @@
 /venv
+**/UECFOOD100
 *.db
 test.py
 .vscode
 *.out
+.DS_Store

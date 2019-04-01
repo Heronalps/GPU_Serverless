@@ -1,0 +1,6 @@
+name: heronalps/uec-food
+version: 0.0.1
+runtime: nvidia
+path: /uec-food
+max_concurrency: 1
+entrypoint: python3 func.py
