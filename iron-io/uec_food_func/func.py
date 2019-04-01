@@ -17,7 +17,7 @@ def handler():
                 # run python3 filter.py <src> ./UECFOOD100_filter/<dest>
                 output, _err = proc.communicate()
                 print ("=====")
-                print ("Add filter to No.{} photo".format(count))
+                print ("Add filter to No.{0} {1} photo".format(count, src_file_path))
                 print (output.decode('utf-8'))
                 count = count + 1
             if count > TOTAL:
