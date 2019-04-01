@@ -3,5 +3,4 @@ version: 0.0.1
 runtime: nvidia
 path: /uec-food
 max_concurrency: 1
-build:
-- docker run --rm --runtime=nvidia -it -v "$PWD":/img-filter -w /img-filter izone/pycuda 
+entrypoint: python3 func.py
