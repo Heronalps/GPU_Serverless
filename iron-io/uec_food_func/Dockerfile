@@ -8,6 +8,6 @@ RUN apt-get update \
 WORKDIR /root/img-filters
 COPY ./UECFOOD100/ /root/img-filters/UECFOOD100/
 COPY ./func.py /root/img-filters/func.py
-RUN pip install Pillow && mkdir ./UECFOOD100_filter
+RUN pip install Pillow && cp -r ./UECFOOD100/ ./UECFOOD100_filter/
 
 ENTRYPOINT [ "python3", "func.py" ]
