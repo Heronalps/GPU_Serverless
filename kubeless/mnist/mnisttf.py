@@ -1,12 +1,15 @@
 import tensorflow as tf
-import matplotlib.pyplot as plt
+import time
+# import matplotlib.pyplot as plt
 
 from keras.models import Sequential
 from keras.layers import Dense, Conv2D, Dropout, Flatten, MaxPooling2D
 from keras import backend
 
 def handler(event, context):
-    backend.tensorflow_backend._get_available_gpus()
+    # backend.tensorflow_backend._get_available_gpus()
+
+    start = time.time()
 
     # x is grayscale code [0 - 255]
     # y is the label of number [0 - 9]
@@ -45,11 +48,13 @@ def handler(event, context):
     model.add(Dense(10, activation=tf.nn.softmax))
 
     model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
-    model.fit(x=x_train, y=y_train, epochs=1)
+    model.fit(x=x_train, y=y_train, epochs=10)
 
     model.evaluate(x_test, y_test)
 
-    plt.imshow(x_test[image_index].reshape([28, 28]), cmap='Greys')
+    # plt.imshow(x_test[image_index].reshape([28, 28]), cmap='Greys')
     # plt.show()
     pred = model.predict(x_test[image_index].reshape(1, 28, 28, 1))
     print (pred.argmax())
+
+    return "The total time used is {0} seconds".format(time.time() - start)
