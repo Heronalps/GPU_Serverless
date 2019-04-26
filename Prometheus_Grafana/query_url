@@ -1,0 +1,1 @@
+https://prometheus.nautilus.optiputer.net/api/v1/query?query=sum(nvml_gpu_percent%20*%20on%20(device_uuid)%20group_left(pod_name,%20namespace_name,%20container_name)%20pod_gpus{namespace_name=~%22guru-research%22})%20by%20(pod_name)%20/%20sum%20(pod_gpus{namespace_name=~%22guru-research%22})%20by%20(pod_name)

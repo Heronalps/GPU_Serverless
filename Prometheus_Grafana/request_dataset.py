@@ -23,14 +23,16 @@ for result in results:
 labelnames.discard('__name__')
 labelnames = sorted(labelnames)
 
-writer = csv.writer(sys.stdout)
+
 # Write the header,
-writer.writerow(['name', 'timestamp', 'value'] + labelnames)
+writer.writerow(['name', 'timestamp', 'values'] + labelnames)
 
 import pdb; pdb.set_trace();
 
 # Write the samples.
 with open('result.csv', 'w', newline='') as csvfile:
+    writer = csv.writer(csvfile)
+    writer.writerow(['name', 'timestamp', 'values'] + labelnames)
     for result in results:
         l = [result['metric'].get('__name__', '')] + result['values']
         for label in labelnames:
