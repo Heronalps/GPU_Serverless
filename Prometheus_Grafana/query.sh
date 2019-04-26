@@ -1,0 +1,1 @@
+python request_dataset.py https://prometheus.nautilus.optiputer.net 'kube_node_status_allocatable{resource="nvidia_com_gpu", node="prp-gpu-2.t2.ucsd.edu"}[5m]'

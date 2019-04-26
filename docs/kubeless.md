@@ -18,7 +18,7 @@ The runtime needs to be ```gpupython3.7```
 
 3. Modify the GPU request in function manifesto by: 
 ```
-kubectl edit functioni <function-name>
+kubectl edit function <function-name>
 ```
 Add resource request:
 ```

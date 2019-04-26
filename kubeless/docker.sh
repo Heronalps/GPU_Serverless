@@ -1,0 +1,1 @@
+docker run --rm -it --runtime=nvidia -v "$PWD":/GPU_Serverless -w /GPU_Serverless kubeless /bin/bash
