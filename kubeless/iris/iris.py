@@ -15,7 +15,7 @@ def handler(event, context):
     iris = datasets.load_iris()
     x = iris.data
     y = iris.target
-    estimator = KerasClassifier(build_fn=baseline_model, epochs=200, batch_size=5, verbose=1)
+    estimator = KerasClassifier(build_fn=baseline_model, epochs=200, batch_size=5, verbose=0)
 
     # kubeless.py does json loading and event is already a dict. 
     # And bool('False') is True, which is weird
