@@ -8,3 +8,4 @@ test.py
 **/.ipynb_checkpoints
 *.csv
 /data
+*.h5
