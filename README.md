@@ -22,3 +22,32 @@ resources:
     limits:
         nvidia.com/gpu: <number>
 ```
+
+
+### Mount volume/secret to kubeless function
+
+``` kubectl edit function <function-name> ```
+
+```
+deployment:
+     metadata:
+       creationTimestamp: null
+     spec:
+       strategy: {}
+       template:
+         metadata:
+           creationTimestamp: null
+         spec:
+           containers:
+           - imagePullPolicy: Always
+             name: ""
+             resources: {}
+             volumeMounts:
+             - mountPath: /var/run/secrets
+               name: s3-cred
+               readOnly: true
+           volumes:
+           - name: s3-cred
+             secret:
+               secretName: s3-cred
+```

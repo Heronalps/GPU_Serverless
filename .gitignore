@@ -9,3 +9,4 @@ test.py
 *.csv
 /data
 *.h5
+secret.yaml
