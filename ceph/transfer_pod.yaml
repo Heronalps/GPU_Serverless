@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: transfer-pod
+spec:
+  containers:
+  - name: gpu-container
+    image: gitlab-registry.nautilus.optiputer.net/prp/jupyterlab:latest
+    command: ["sleep", "infinity"]
+    resources:
+      limits:
+        nvidia.com/gpu: 1
+    volumeMounts:
+    - mountPath: /imageclf
+      name: imageclf
+  volumes:
+    - name: imageclf
+      persistentVolumeClaim:
+        claimName: imageclf
+  
