@@ -6,7 +6,8 @@ from keras.layers import Dense, Activation, Flatten, Dropout, GlobalAveragePooli
 from keras import backend as K
 from keras.optimizers import SGD, Adam
 from keras.callbacks import ModelCheckpoint
-from matplotlib import pyplot as plt
+from keras.models import load_model
+# from matplotlib import pyplot as plt
 from PIL import Image, ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 import numpy as np
@@ -18,8 +19,8 @@ config = tf.ConfigProto()
 config.gpu_options.allow_growth = True  # dynamically grow the memory used on the GPU
 config.log_device_placement = True  # to log device placement (on which device the operation ran)
 
-TRAIN_DIR = "../../data/SantaCruzIsland_Labeled_5Class"
-VALID_DIR = "../../data/SantaCruzIsland_Validation_5Class"
+TRAIN_DIR = "/imageclf/SantaCruzIsland_Labeled_5Class"
+VALID_DIR = "/imageclf/data/SantaCruzIsland_Validation_5Class"
 BATCH_SIZE = 8
 NUM_EPOCHS = 10
 WIDTH = 1920
@@ -53,7 +54,7 @@ def handler(event, context):
     train_generator = train_datagen.flow_from_directory(TRAIN_DIR, target_size=(WIDTH, HEIGHT), \
                                                         batch_size = BATCH_SIZE)
 
-    valid_datagen = image.ImageDataGenerator(preprocessing_function=preprocess_input, rotation_range=90, 
+    valid_datagen = image.ImageDataGenerator(preprocessing_function=preprocess_input, rotation_range=90, \
                                              horizontal_flip=True, vertical_flip=True)
     valid_generator = valid_datagen.flow_from_directory(VALID_DIR, target_size=(WIDTH, HEIGHT), \
                                                         batch_size = BATCH_SIZE)
@@ -61,9 +62,11 @@ def handler(event, context):
     resnet50_model = ResNet50(input_shape=(WIDTH, HEIGHT, 3), weights='imagenet', include_top=False)
     layered_model = build_model(resnet50_model, dropout=dropout, fc_layers=FC_LAYERS, num_classes=len(class_list))
 
-    history = train_model(layered_model, "ResNet50", train_generator, valid_generator, class_weights)
+    history, trained_model = train_model(layered_model, "ResNet50", train_generator, valid_generator, class_weights)
 
-    plot_training(history)
+    # plot_training(history)
+
+    trained_model.save('/imageclf/checkpoints/resnet50_model.h5')
 
     return "The total time of training is {0} seconds".format(time.time() - start)
 
@@ -102,32 +105,31 @@ def train_model(model, model_name, train_data_gen, valid_data_gen, class_weight)
     model.compile(optimizer=adam, loss='categorical_crossentropy', metrics=['accuracy'])
     
     # TODO - Save to ceph
-    checkpoint = ModelCheckpoint("../checkpoints/{0}_model_weights.h5".format(model_name), monitor=["acc"], verbose=1, mode='max')
+    checkpoint = ModelCheckpoint("/imageclf/checkpoints/{0}_model_weights.h5".format(model_name), monitor=["acc"], verbose=1, mode='max')
     
     history = model.fit_generator(generator=train_data_gen, epochs = NUM_EPOCHS, workers=8, 
                                   steps_per_epoch=num_train_images // BATCH_SIZE, \
                                   shuffle=True, callbacks=[checkpoint], validation_data=valid_data_gen, \
                                   validation_steps = num_valid_images // BATCH_SIZE, class_weight = class_weight)
 
-    return history
+    return history, model
 
 
-def plot_training(history):
-    acc = history.history['acc']
-    val_acc = history.history['val_acc']
-    loss = history.history['loss']
-    val_loss = history.history['val_loss']
-    epochs = range(len(acc))
+# def plot_training(history):
+#     acc = history.history['acc']
+#     val_acc = history.history['val_acc']
+#     loss = history.history['loss']
+#     val_loss = history.history['val_loss']
+#     epochs = range(len(acc))
     
-    plt.plot(epochs, acc, 'b.')
-    plt.plot(epochs, val_acc, 'r-')
-    plt.title('Training and validation accuracy')
+#     plt.plot(epochs, acc, 'b.')
+#     plt.plot(epochs, val_acc, 'r-')
+#     plt.title('Training and validation accuracy')
 
-    plt.figure()
-    plt.plot(epochs, loss, 'b.')
-    plt.plot(epochs, val_loss, 'r-')
-    plt.title('Training and validation loss')
-    plt.show()
+#     plt.figure()
+#     plt.plot(epochs, loss, 'b.')
+#     plt.plot(epochs, val_loss, 'r-')
+#     plt.title('Training and validation loss')
+#     plt.show()
     
-    # TODO - Save to ceph
-    plt.savefig('training_history.png')
+#     plt.savefig('/imageclf/charts/training_history.png')

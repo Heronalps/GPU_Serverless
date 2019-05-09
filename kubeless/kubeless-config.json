@@ -1,0 +1,31 @@
+{
+	"spec": {
+		"template": {
+			"spec": {
+				"container": {
+					"resources": {
+						"requests": {
+							"nvidia.com/gpu": "1"
+						},
+						"limits": {
+							"nvidia.com/gpu": "1"
+						}
+					},
+					"volumeMounts": {
+						"mountPath": "/imageclf",
+						"name": "imageclf"
+					}
+				},
+				"nodeSelector": {
+					"gpu-type": "1080Ti"
+				},
+				"volumes": {
+					"name": "imageclf",
+					"persistentVolumeClaim": {
+						"claimName": "imageclf"
+					}
+				}
+			}
+		}
+	}
+}

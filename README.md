@@ -43,11 +43,25 @@ deployment:
              name: ""
              resources: {}
              volumeMounts:
-             - mountPath: /var/run/secrets
-               name: s3-cred
-               readOnly: true
+             - mountPath: /imageclf
+               name: imageclf
            volumes:
-           - name: s3-cred
+           - name: imageclf
              secret:
-               secretName: s3-cred
+               secretName: imageclf
+```
+
+### Kubernetes command
+
+```
+k get pods -n kubeless
+
+k logs kubeless-controller-manager-56cbb7c58b-hs8fs -c kubeless-function-controller -n kubeless
+
+http-trigger-controller
+
+k delete pod kubeless-controller-manager-56cbb7c58b-hs8fs -n kubeless
+
+k get configmap -n kubeless -o yaml > output.yaml
+
 ```
