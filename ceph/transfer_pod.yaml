@@ -8,6 +8,8 @@ spec:
     image: gitlab-registry.nautilus.optiputer.net/prp/jupyterlab:latest
     command: ["sleep", "infinity"]
     resources:
+      requests:
+        nvidia.com/gpu: 1
       limits:
         nvidia.com/gpu: 1
     volumeMounts:
