@@ -19,4 +19,4 @@ def handler(event, context):
     return "Predictde : {0}  Probability : {1}".format(class_list[index], y_prob[0][index])
 
 if __name__ == "__main__":
-    handler({"data" : {"path" : "../../data/SantaCruzIsland_Validation_5Class/Birds/IMG_1304.JPG"}})
+    handler({"data" : {"path" : "/racelab/SantaCruzIsland_Validation_5Class/Birds/IMG_1304.JPG"}}, {})

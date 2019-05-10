@@ -13,14 +13,15 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 import numpy as np
 import time
 
-from keras.backend.tensorflow_backend import set_session
-import tensorflow as tf
-config = tf.ConfigProto()
-config.gpu_options.allow_growth = True  # dynamically grow the memory used on the GPU
-config.log_device_placement = True  # to log device placement (on which device the operation ran)
+# from keras.backend.tensorflow_backend import set_session
+# import tensorflow as tf
+# config = tf.ConfigProto()
+# config.gpu_options.allow_growth = True  # dynamically grow the memory used on the GPU
+# config.log_device_placement = True  # to log device placement (on which device the operation ran)
 
 TRAIN_DIR = "/racelab/SantaCruzIsland_Labeled_5Class"
 VALID_DIR = "/racelab/SantaCruzIsland_Validation_5Class"
+MODEL_DIR = "/racelab/checkpoints/resnet50_model.h5"
 BATCH_SIZE = 8
 NUM_EPOCHS = 10
 WIDTH = 1920
@@ -66,7 +67,7 @@ def handler(event, context):
 
     # plot_training(history)
 
-    trained_model.save('/racelab/checkpoints/resnet50_model.h5')
+    trained_model.save(MODEL_DIR)
 
     return "The total time of training is {0} seconds".format(time.time() - start)
 
@@ -107,7 +108,7 @@ def train_model(model, model_name, train_data_gen, valid_data_gen, class_weight)
     # TODO - Save to ceph
     checkpoint = ModelCheckpoint("/racelab/checkpoints/{0}_model_weights.h5".format(model_name), monitor=["acc"], verbose=1, mode='max')
     
-    history = model.fit_generator(generator=train_data_gen, epochs = NUM_EPOCHS, workers=8, verbose=2, \
+    history = model.fit_generator(generator=train_data_gen, epochs = NUM_EPOCHS, workers = 8, verbose=2, \
                                   steps_per_epoch=num_train_images // BATCH_SIZE, \
                                   shuffle=True, callbacks=[checkpoint], validation_data=valid_data_gen, \
                                   validation_steps = num_valid_images // BATCH_SIZE, class_weight = class_weight)

@@ -10,10 +10,12 @@ data:
               "containers": [{
                 "resources": {
                   "requests": {
-                    "nvidia.com/gpu": "1"              
+                    "nvidia.com/gpu": "1",
+                    "memory": "256Mi"              
                   },              
                   "limits": {
-                    "nvidia.com/gpu": "1"  
+                    "nvidia.com/gpu": "1",
+                    "memory": "8Gi"
                   }
                 },
                 "volumeMounts": [{
