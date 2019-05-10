@@ -56,12 +56,14 @@ deployment:
 ```
 k get pods -n kubeless
 
-k logs kubeless-controller-manager-56cbb7c58b-hs8fs -c kubeless-function-controller -n kubeless
+k logs kubeless-controller-manager-56cbb7c58b-xzvvp -c kubeless-function-controller -n kubeless
 
 http-trigger-controller
 
-k delete pod kubeless-controller-manager-56cbb7c58b-hs8fs -n kubeless
+k delete pod kubeless-controller-manager-56cbb7c58b-xzvvp -n kubeless
 
 k get configmap -n kubeless -o yaml > output.yaml
+
+k edit configmap kubeless-config -n kubeless
 
 ```

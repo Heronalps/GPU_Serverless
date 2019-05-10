@@ -19,8 +19,8 @@ config = tf.ConfigProto()
 config.gpu_options.allow_growth = True  # dynamically grow the memory used on the GPU
 config.log_device_placement = True  # to log device placement (on which device the operation ran)
 
-TRAIN_DIR = "/imageclf/SantaCruzIsland_Labeled_5Class"
-VALID_DIR = "/imageclf/data/SantaCruzIsland_Validation_5Class"
+TRAIN_DIR = "/racelab/SantaCruzIsland_Labeled_5Class"
+VALID_DIR = "/racelab/SantaCruzIsland_Validation_5Class"
 BATCH_SIZE = 8
 NUM_EPOCHS = 10
 WIDTH = 1920
@@ -66,7 +66,7 @@ def handler(event, context):
 
     # plot_training(history)
 
-    trained_model.save('/imageclf/checkpoints/resnet50_model.h5')
+    trained_model.save('/racelab/checkpoints/resnet50_model.h5')
 
     return "The total time of training is {0} seconds".format(time.time() - start)
 
@@ -105,7 +105,7 @@ def train_model(model, model_name, train_data_gen, valid_data_gen, class_weight)
     model.compile(optimizer=adam, loss='categorical_crossentropy', metrics=['accuracy'])
     
     # TODO - Save to ceph
-    checkpoint = ModelCheckpoint("/imageclf/checkpoints/{0}_model_weights.h5".format(model_name), monitor=["acc"], verbose=1, mode='max')
+    checkpoint = ModelCheckpoint("/racelab/checkpoints/{0}_model_weights.h5".format(model_name), monitor=["acc"], verbose=1, mode='max')
     
     history = model.fit_generator(generator=train_data_gen, epochs = NUM_EPOCHS, workers=8, 
                                   steps_per_epoch=num_train_images // BATCH_SIZE, \

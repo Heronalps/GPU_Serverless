@@ -12,7 +12,7 @@ def handler(event, context):
     x = np.expand_dims(x, axis=0)
     x = preprocess_input(x)
 
-    trained_model = load_model('/imageclf/checkpoints/resnet50_model.h5')
+    trained_model = load_model('/racelab/checkpoints/resnet50_model.h5')
     
     y_prob = trained_model.predict(x)
     index = y_prob.argmax()

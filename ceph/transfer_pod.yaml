@@ -11,10 +11,17 @@ spec:
       limits:
         nvidia.com/gpu: 1
     volumeMounts:
-    - mountPath: /imageclf
-      name: imageclf
+    - mountPath: /racelab
+      name: fs-store
   volumes:
-    - name: imageclf
-      persistentVolumeClaim:
-        claimName: imageclf
+    - name: fs-store
+      flexVolume:
+        driver: ceph.rook.io/rook
+        fsType: ceph
+        options:
+          clusterNamespace: rook
+          fsName: nautilusfs
+          path: /racelab
+          mountUser: racelab
+          mountSecret: ceph-fs-secret
   
