@@ -107,7 +107,7 @@ def train_model(model, model_name, train_data_gen, valid_data_gen, class_weight)
     # TODO - Save to ceph
     checkpoint = ModelCheckpoint("/racelab/checkpoints/{0}_model_weights.h5".format(model_name), monitor=["acc"], verbose=1, mode='max')
     
-    history = model.fit_generator(generator=train_data_gen, epochs = NUM_EPOCHS, workers=8, 
+    history = model.fit_generator(generator=train_data_gen, epochs = NUM_EPOCHS, workers=8, verbose=2, \
                                   steps_per_epoch=num_train_images // BATCH_SIZE, \
                                   shuffle=True, callbacks=[checkpoint], validation_data=valid_data_gen, \
                                   validation_steps = num_valid_images // BATCH_SIZE, class_weight = class_weight)
@@ -133,3 +133,6 @@ def train_model(model, model_name, train_data_gen, valid_data_gen, class_weight)
 #     plt.show()
     
 #     plt.savefig('/imageclf/charts/training_history.png')
+
+if __name__ == "__main__":
+    handler({}, {})
