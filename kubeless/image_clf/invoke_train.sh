@@ -1,0 +1,1 @@
+kubeless function call image-clf-train --data '{"img_per_epoch" : "10", "num_epoch": "10"}'

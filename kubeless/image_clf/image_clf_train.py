@@ -26,29 +26,36 @@ BATCH_SIZE = 8
 NUM_EPOCHS = 10
 WIDTH = 1920
 HEIGHT = 1080
-num_train_images = 100
-num_valid_images = 10
+NUM_TRAIN_IMAGES_PER_EPOCH = 100
+NUM_VALID_IMAGES_PER_EPOCH = 10
 
-num_birds = 127
-num_empty = 249
-num_fox = 11
-num_humans = 32
-num_rodents = 251
+NUM_BIRDS = 127
+NUM_EMPTY = 250
+NUM_FOX = 11
+NUM_HUMANS = 32
+NUM_RODENTS = 251
 
-class_list = ["Birds", "Empty", "Fox", "Humans", "Rodents"]
+CLASS_LIST = ["Birds", "Empty", "Fox", "Humans", "Rodents"]
 FC_LAYERS = [1024, 1024]
-dropout = 0.5
+DROPOUT = 0.5
 
 def handler(event, context):
     start = time.time()
+    if isinstance(event['data'], dict) and "img_per_epoch" in event['data']:
+        global NUM_TRAIN_IMAGES_PER_EPOCH
+        NUM_TRAIN_IMAGES_PER_EPOCH = int(event['data']['img_per_epoch'])
 
-    total_num = [num_birds, num_empty, num_fox, num_humans, num_rodents]
+    if isinstance(event['data'], dict) and "num_epoch" in event['data']:
+        global NUM_EPOCHS
+        NUM_EPOCHS = int(event['data']['num_epoch'])
+
+    total_num = [NUM_BIRDS, NUM_EMPTY, NUM_FOX, NUM_HUMANS, NUM_RODENTS]
     reciprocal = [1/x for x in total_num]
     class_weights = [ x / sum(reciprocal) for x in reciprocal]
     # print (class_weights)
 
     # The total size of training dataset
-    total_train_size = num_train_images * NUM_EPOCHS
+    total_train_size = NUM_TRAIN_IMAGES_PER_EPOCH * NUM_EPOCHS
 
     train_datagen = image.ImageDataGenerator(preprocessing_function=preprocess_input, rotation_range=90, \
                                              horizontal_flip=True, vertical_flip=True)
@@ -61,7 +68,7 @@ def handler(event, context):
                                                         batch_size = BATCH_SIZE)
 
     resnet50_model = ResNet50(input_shape=(WIDTH, HEIGHT, 3), weights='imagenet', include_top=False)
-    layered_model = build_model(resnet50_model, dropout=dropout, fc_layers=FC_LAYERS, num_classes=len(class_list))
+    layered_model = build_model(resnet50_model, dropout=DROPOUT, fc_layers=FC_LAYERS, num_classes=len(CLASS_LIST))
 
     history, trained_model = train_model(layered_model, "ResNet50", train_generator, valid_generator, class_weights)
 
@@ -69,7 +76,8 @@ def handler(event, context):
 
     trained_model.save(MODEL_DIR)
 
-    return "The total time of training is {0} seconds".format(time.time() - start)
+    return "The total time of training {0} images is {0} seconds".format(total_train_size, \
+                                                                         time.time() - start)
 
 
 def build_model(base_model, dropout, fc_layers, num_classes):
@@ -105,13 +113,12 @@ def train_model(model, model_name, train_data_gen, valid_data_gen, class_weight)
     # compile the model (should be done *after* setting layers to non-trainable)
     model.compile(optimizer=adam, loss='categorical_crossentropy', metrics=['accuracy'])
     
-    # TODO - Save to ceph
     checkpoint = ModelCheckpoint("/racelab/checkpoints/{0}_model_weights.h5".format(model_name), monitor=["acc"], verbose=1, mode='max')
     
     history = model.fit_generator(generator=train_data_gen, epochs = NUM_EPOCHS, workers = 8, verbose=2, \
-                                  steps_per_epoch=num_train_images // BATCH_SIZE, \
+                                  steps_per_epoch=NUM_TRAIN_IMAGES_PER_EPOCH // BATCH_SIZE, \
                                   shuffle=True, callbacks=[checkpoint], validation_data=valid_data_gen, \
-                                  validation_steps = num_valid_images // BATCH_SIZE, class_weight = class_weight)
+                                  validation_steps = NUM_VALID_IMAGES_PER_EPOCH // BATCH_SIZE, class_weight = class_weight)
 
     return history, model
 
@@ -136,4 +143,4 @@ def train_model(model, model_name, train_data_gen, valid_data_gen, class_weight)
 #     plt.savefig('/imageclf/charts/training_history.png')
 
 if __name__ == "__main__":
-    handler({}, {})
+    handler({"data" : {"img_per_epoch" : "10", "num_epoch": "10"}}, {})

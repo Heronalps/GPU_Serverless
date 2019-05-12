@@ -8,7 +8,7 @@ class_list = ["Birds", "Empty", "Fox", "Humans", "Rodents"]
 
 def handler(event, context):
     start = time.time()
-    if 'data' in event and 'path' in event['data']:
+    if isinstance(event['data'], dict) and "path" in event['data']:
         path = event['data']['path']
     else:
         path = "/racelab/SantaCruzIsland_Validation_5Class/Birds/IMG_1304.JPG"

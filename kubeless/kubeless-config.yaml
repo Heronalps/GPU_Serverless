@@ -11,11 +11,11 @@ data:
                 "resources": {
                   "requests": {
                     "nvidia.com/gpu": "1",
-                    "memory": "256Mi"              
+                    "memory": "1Gi"              
                   },              
                   "limits": {
                     "nvidia.com/gpu": "1",
-                    "memory": "8Gi"
+                    "memory": "16Gi"
                   }
                 },
                 "volumeMounts": [{
