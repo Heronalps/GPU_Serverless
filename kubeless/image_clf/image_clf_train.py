@@ -1,6 +1,7 @@
 from keras.applications.resnet50 import ResNet50, preprocess_input, decode_predictions
 from keras.applications.nasnet import NASNetMobile
 from keras.preprocessing import image
+from keras.utils import multi_gpu_model
 from keras.models import Sequential, Model
 from keras.layers import Dense, Activation, Flatten, Dropout, GlobalAveragePooling2D
 from keras import backend as K
@@ -8,6 +9,7 @@ from keras.optimizers import SGD, Adam
 from keras.callbacks import ModelCheckpoint
 from keras.models import load_model
 # from matplotlib import pyplot as plt
+from tensorflow.python.client import device_lib
 from PIL import Image, ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 import numpy as np
@@ -40,7 +42,7 @@ FC_LAYERS = [1024, 1024]
 DROPOUT = 0.5
 
 def handler(event, context):
-    start = time.time()
+    
     if isinstance(event['data'], dict) and "img_per_epoch" in event['data']:
         global NUM_TRAIN_IMAGES_PER_EPOCH
         NUM_TRAIN_IMAGES_PER_EPOCH = int(event['data']['img_per_epoch'])
@@ -68,7 +70,16 @@ def handler(event, context):
                                                         batch_size = BATCH_SIZE)
 
     resnet50_model = ResNet50(input_shape=(WIDTH, HEIGHT, 3), weights='imagenet', include_top=False)
-    layered_model = build_model(resnet50_model, dropout=DROPOUT, fc_layers=FC_LAYERS, num_classes=len(CLASS_LIST))
+    
+    # Parallel with multiple GPUs
+    available_devices = device_lib.list_local_devices()
+    num_gpus = len([x for x in available_devices if x.device_type == 'GPU'])
+    parallel_model = multi_gpu_model(resnet50_model, gpus=num_gpus)
+
+    # Build layered model
+    layered_model = build_model(parallel_model, dropout=DROPOUT, fc_layers=FC_LAYERS, num_classes=len(CLASS_LIST))
+
+    start = time.time()
 
     history, trained_model = train_model(layered_model, "ResNet50", train_generator, valid_generator, class_weights)
 
@@ -76,7 +87,10 @@ def handler(event, context):
 
     trained_model.save(MODEL_DIR)
 
-    return "The total time of training {0} images is {0} seconds".format(total_train_size, \
+    print ("The total time of training {0} images is {1} seconds".format(total_train_size, \
+                                                                         time.time() - start))
+
+    return "The total time of training {0} images is {1} seconds".format(total_train_size, \
                                                                          time.time() - start)
 
 

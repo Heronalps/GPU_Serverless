@@ -10,3 +10,4 @@ test.py
 /data
 *.h5
 secret.yaml
+*.txt
