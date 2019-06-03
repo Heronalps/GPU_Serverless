@@ -24,7 +24,12 @@ import time
 TRAIN_DIR = "/racelab/SantaCruzIsland_Labeled_5Class"
 VALID_DIR = "/racelab/SantaCruzIsland_Validation_5Class"
 MODEL_DIR = "/racelab/checkpoints/resnet50_model.h5"
-BATCH_SIZE = 8
+# Parallel with multiple GPUs
+available_devices = device_lib.list_local_devices()
+NUM_GPU = len([x for x in available_devices if x.device_type == 'GPU'])
+
+# Increase BATCH_SIZE based on number of GPUs to harness the quasi-linear speedup of multiple GPUS
+BATCH_SIZE = 8 * NUM_GPU
 NUM_EPOCHS = 10
 WIDTH = 1920
 HEIGHT = 1080
@@ -71,10 +76,7 @@ def handler(event, context):
 
     resnet50_model = ResNet50(input_shape=(WIDTH, HEIGHT, 3), weights='imagenet', include_top=False)
     
-    # Parallel with multiple GPUs
-    available_devices = device_lib.list_local_devices()
-    num_gpus = len([x for x in available_devices if x.device_type == 'GPU'])
-    parallel_model = multi_gpu_model(resnet50_model, gpus=num_gpus)
+    parallel_model = multi_gpu_model(resnet50_model, gpus=NUM_GPU)
 
     # Build layered model
     layered_model = build_model(parallel_model, dropout=DROPOUT, fc_layers=FC_LAYERS, num_classes=len(CLASS_LIST))
