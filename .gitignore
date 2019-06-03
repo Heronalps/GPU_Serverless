@@ -13,3 +13,4 @@ secret.yaml
 *.txt
 go.sum
 go.mod
+app
