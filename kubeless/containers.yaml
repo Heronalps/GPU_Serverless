@@ -1,0 +1,22 @@
+containers: 
+- resources: 
+    requests: 
+      memory: 1Gi                          
+    limits: 
+      memory: 16Gi
+  volumeMounts: 
+  - mountPath: /racelab
+    name: fs-store
+nodeSelector: 
+  gpu-type: 1080Ti
+volumes: 
+- name: fs-store
+  flexVolume:             
+  - driver: ceph.rook.io/rook
+    fsType: ceph
+    options: 
+      clusterNamespace: rook
+      fsName: nautilusfs
+      path: /racelab
+      mountUser: racelab
+      mountSecret: ceph-fs-secret

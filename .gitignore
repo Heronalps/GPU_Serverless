@@ -7,3 +7,9 @@ test.py
 .DS_Store
 **/.ipynb_checkpoints
 *.csv
+/data
+*.h5
+secret.yaml
+*.txt
+go.sum
+go.mod
