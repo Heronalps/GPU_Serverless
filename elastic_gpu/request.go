@@ -55,6 +55,10 @@ func main() {
 		// - And/or cast to StatusError and use its properties like e.g. ErrStatus.Message
 		namespace := "racelab"
 		pod := "image-clf-train-85f56dcbb-b6mqg"
+
+		// clientset is much like AWS SDK client boto3.client('s3')
+		// The return result are written into parameters
+
 		_, err = clientset.CoreV1().Pods(namespace).Get(pod, metav1.GetOptions{})
 		if errors.IsNotFound(err) {
 			fmt.Printf("Pod %s in namespace %s not found\n", pod, namespace)
