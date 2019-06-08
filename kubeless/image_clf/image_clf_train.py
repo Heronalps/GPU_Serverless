@@ -76,10 +76,13 @@ def handler(event, context):
 
     resnet50_model = ResNet50(input_shape=(WIDTH, HEIGHT, 3), weights='imagenet', include_top=False)
     
-    parallel_model = multi_gpu_model(resnet50_model, gpus=NUM_GPU)
+    if NUM_GPU > 1:
+        raw_model = multi_gpu_model(resnet50_model, gpus=NUM_GPU)
+    else:
+        raw_model = resnet50_model
 
     # Build layered model
-    layered_model = build_model(parallel_model, dropout=DROPOUT, fc_layers=FC_LAYERS, num_classes=len(CLASS_LIST))
+    layered_model = build_model(raw_model, dropout=DROPOUT, fc_layers=FC_LAYERS, num_classes=len(CLASS_LIST))
 
     start = time.time()
 
