@@ -12,3 +12,4 @@ test.py
 secret.yaml
 *.txt
 app
+vendor/
