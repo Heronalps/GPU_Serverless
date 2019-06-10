@@ -27,7 +27,7 @@ func main() {
 
 	// Query(ctx context.Context, query string, ts time.Time) (model.Value, api.Error)
 	// curVal => model.Value
-	if curVal, err := q.Query(ctx, "avg_over_time(namespace_gpu_utilization[12h])", time.Now()); err != nil {
+	if curVal, err := q.Query(ctx, "avg_over_time(namespace_gpu_utilization[1m])", time.Now()); err != nil {
 		log.Printf("%v", err)
 	} else {
 
@@ -37,9 +37,7 @@ func main() {
 			fmt.Println("===Vector====")
 			fmt.Println(vectorVal)
 			for _, elem := range vectorVal {
-
 				for _, ns := range viper.GetStringSlice("portal.gpu_exceptions") {
-
 					if string(elem.Metric["namespace_name"]) == ns {
 						return
 					}

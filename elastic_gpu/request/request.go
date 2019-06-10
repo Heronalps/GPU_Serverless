@@ -33,6 +33,7 @@ func main() {
 	flag.Parse()
 
 	// use the current context in kubeconfig
+	// This config is credential information of kubernetes
 	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
 	if err != nil {
 		panic(err.Error())

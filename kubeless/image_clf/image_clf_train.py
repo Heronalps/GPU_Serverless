@@ -24,12 +24,7 @@ import time
 TRAIN_DIR = "/racelab/SantaCruzIsland_Labeled_5Class"
 VALID_DIR = "/racelab/SantaCruzIsland_Validation_5Class"
 MODEL_DIR = "/racelab/checkpoints/resnet50_model.h5"
-# Parallel with multiple GPUs
-available_devices = device_lib.list_local_devices()
-NUM_GPU = len([x for x in available_devices if x.device_type == 'GPU'])
 
-# Increase BATCH_SIZE based on number of GPUs to harness the quasi-linear speedup of multiple GPUS
-BATCH_SIZE = 8 * NUM_GPU
 NUM_EPOCHS = 10
 WIDTH = 1920
 HEIGHT = 1080
@@ -61,6 +56,14 @@ def handler(event, context):
     class_weights = [ x / sum(reciprocal) for x in reciprocal]
     # print (class_weights)
 
+    # Parallel with multiple GPUs
+    available_devices = device_lib.list_local_devices()
+    NUM_GPU = len([x for x in available_devices if x.device_type == 'GPU'])
+
+    # Increase BATCH_SIZE based on number of GPUs to harness the quasi-linear speedup of multiple GPUS
+    BATCH_SIZE = 8 * NUM_GPU if NUM_GPU > 0 else 8
+
+
     # The total size of training dataset
     total_train_size = NUM_TRAIN_IMAGES_PER_EPOCH * NUM_EPOCHS
 
@@ -86,7 +89,7 @@ def handler(event, context):
 
     start = time.time()
 
-    history, trained_model = train_model(layered_model, "ResNet50", train_generator, valid_generator, class_weights)
+    history, trained_model = train_model(layered_model, train_generator, valid_generator, class_weights, BATCH_SIZE)
 
     # plot_training(history)
 
@@ -124,7 +127,7 @@ def build_model(base_model, dropout, fc_layers, num_classes):
     
     return model
 
-def train_model(model, model_name, train_data_gen, valid_data_gen, class_weight):
+def train_model(model, train_data_gen, valid_data_gen, class_weight, batch_size):
 
     # create adam optimizer with learning rate
     adam = Adam(lr=0.00001)
@@ -132,12 +135,12 @@ def train_model(model, model_name, train_data_gen, valid_data_gen, class_weight)
     # compile the model (should be done *after* setting layers to non-trainable)
     model.compile(optimizer=adam, loss='categorical_crossentropy', metrics=['accuracy'])
     
-    checkpoint = ModelCheckpoint("/racelab/checkpoints/{0}_model_weights.h5".format(model_name), monitor=["acc"], verbose=1, mode='max')
+    checkpoint = ModelCheckpoint(MODEL_DIR, monitor=["acc"], verbose=1, mode='max')
     
     history = model.fit_generator(generator=train_data_gen, epochs = NUM_EPOCHS, workers = 8, verbose=2, \
-                                  steps_per_epoch=NUM_TRAIN_IMAGES_PER_EPOCH // BATCH_SIZE, \
+                                  steps_per_epoch=NUM_TRAIN_IMAGES_PER_EPOCH // batch_size, \
                                   shuffle=True, callbacks=[checkpoint], validation_data=valid_data_gen, \
-                                  validation_steps = NUM_VALID_IMAGES_PER_EPOCH // BATCH_SIZE, class_weight = class_weight)
+                                  validation_steps = NUM_VALID_IMAGES_PER_EPOCH // batch_size, class_weight = class_weight)
 
     return history, model
 

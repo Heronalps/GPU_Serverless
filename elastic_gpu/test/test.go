@@ -1,11 +1,9 @@
 package main
 
 import (
-	"fmt"
-
-	"github.com/prometheus/common/model"
+	"log"
 )
 
 func main() {
-	fmt.Println(model.Vector)
+	log.Printf("%s", "Log entry")
 }
