@@ -1,1 +1,1 @@
-k patch deployment image-clf-train --patch "$(cat patch-file.yaml)"
+kubectl patch deployment image-clf-train --patch "$(cat patch-file.yaml)"
