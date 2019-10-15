@@ -51,6 +51,31 @@ deployment:
                secretName: imageclf
 ```
 
+### Patch kubeless function 
+```
+kubectl patch deployment <function name> --patch "$(cat patch-file.yaml)"
+```
+
+patch-file.yaml
+```
+spec:
+  template:
+    spec:
+      containers:
+      - name: mnist-cnn
+        resources: 
+          requests: 
+            memory: 8Gi                          
+            nvidia.com/gpu: 1
+          limits: 
+            memory: 32Gi
+            nvidia.com/gpu: 1
+        volumeMounts: 
+        - mountPath: /racelab
+          name: fs-store
+
+```
+
 ### Kubernetes command
 
 ```

@@ -1,4 +1,5 @@
 /venv
+/venv2
 **/UECFOOD100
 *.db
 test.py
@@ -11,5 +12,5 @@ test.py
 *.h5
 secret.yaml
 *.txt
-go.sum
-go.mod
+app
+vendor/

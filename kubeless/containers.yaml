@@ -1,9 +1,11 @@
 containers: 
 - resources: 
     requests: 
-      memory: 1Gi                          
+      memory: 6Gi   
+      nvidia.com/gpu: 1                       
     limits: 
       memory: 16Gi
+      nvidia.com/gpu: 1
   volumeMounts: 
   - mountPath: /racelab
     name: fs-store

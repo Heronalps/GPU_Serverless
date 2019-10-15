@@ -1,0 +1,15 @@
+spec:
+  template:
+    spec:
+      containers:
+      - name: mnist-cnn
+        resources: 
+          requests: 
+            memory: 8Gi                          
+            nvidia.com/gpu: 1
+          limits: 
+            memory: 32Gi
+            nvidia.com/gpu: 1
+        volumeMounts: 
+        - mountPath: /racelab
+          name: fs-store

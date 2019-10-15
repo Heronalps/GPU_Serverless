@@ -1,4 +1,4 @@
-import numpy, time
+import numpy, time, json
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.wrappers.scikit_learn import KerasClassifier
@@ -20,7 +20,9 @@ def handler(event, context):
     # kubeless.py does json loading and event is already a dict. 
     # And bool('False') is True, which is weird
     # For those reasons, event['data']['cv'] is compared with str 'True'
-    if event['data']['cv'] == 'True':
+    
+    e = json.loads(event)
+    if e['data']['cv'] == 'True':
         kfold = KFold(n_splits=10, shuffle=True, random_state=123)
         results = cross_val_score(estimator, x, y, cv=kfold)
         accuracy = "Accuray: {0} ({1})".format(results.mean()*100, results.std()*100)
@@ -43,4 +45,4 @@ def baseline_model():
 
 
 if __name__ == "__main__":
-    print (handler('{"data":{"cv":"False"}}', {}))
+    print (handler('{"data":{"cv":"True"}}', {}))
