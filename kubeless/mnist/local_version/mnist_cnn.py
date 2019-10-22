@@ -66,7 +66,7 @@ def test_step(images, labels):
     test_loss(t_loss)
     test_accuracy(labels, predictions)
 
-EPOCHS = 5
+EPOCHS = 20
 start_ts = time.time()
 
 for epoch in range(EPOCHS):
@@ -89,5 +89,5 @@ for epoch in range(EPOCHS):
     test_loss.reset_states()
     test_accuracy.reset_states()
 
-print ("CNN takes {0} training on {1} and testing on {2} images {3} epoches.".format(time.time() - start_ts,
+print ("CNN takes {0} seconds training on {1} and testing on {2} images {3} epoches.".format(time.time() - start_ts,
                                                                                      len(x_train), len(x_test), EPOCHS))
