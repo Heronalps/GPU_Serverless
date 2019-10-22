@@ -1,5 +1,14 @@
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 import time
+
+from keras.backend.tensorflow_backend import set_session
+
+config = tf.ConfigProto(
+    # gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.5),
+    device_count={'GPU': 0},
+    log_device_placement=True
+)
+set_session(tf.Session(config=config))
 
 mnist = tf.keras.datasets.mnist
 
