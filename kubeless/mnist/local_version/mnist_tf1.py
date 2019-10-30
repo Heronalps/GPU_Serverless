@@ -1,12 +1,12 @@
-import tensorflow.compat.v1 as tf
+import tensorflow as tf
 import time
 
-from keras.backend.tensorflow_backend import set_session
+from tensorflow.keras.backend import set_session
 
 config = tf.ConfigProto(
     # gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.5),
     device_count={'GPU': 0},
-    log_device_placement=True
+    log_device_placement=False
 )
 set_session(tf.Session(config=config))
 
@@ -15,13 +15,15 @@ mnist = tf.keras.datasets.mnist
 (x_train, y_train),(x_test, y_test) = mnist.load_data()
 x_train, x_test = x_train / 255.0, x_test / 255.0
 
+start_ts = time.time()
+
 model = tf.keras.models.Sequential([
   tf.keras.layers.Flatten(input_shape=(28, 28)),
   tf.keras.layers.Dense(512, activation=tf.nn.relu),
   tf.keras.layers.Dropout(0.2),
   tf.keras.layers.Dense(10, activation=tf.nn.softmax)
 ])
-start_ts = time.time()
+
 EPOCHS = 5
 
 model.compile(optimizer='adam',

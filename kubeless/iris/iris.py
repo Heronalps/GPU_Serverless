@@ -1,8 +1,8 @@
 import numpy, time, json
-from keras.models import Sequential
-from keras.layers import Dense
-from keras.wrappers.scikit_learn import KerasClassifier
-from keras.utils import np_utils
+from tensorflow.keras import backend
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.wrappers.scikit_learn import KerasClassifier
 from sklearn.model_selection import cross_val_score, KFold, train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.pipeline import Pipeline
@@ -17,12 +17,12 @@ def handler(event, context):
     y = iris.target
     estimator = KerasClassifier(build_fn=baseline_model, epochs=200, batch_size=5, verbose=0)
 
-    # kubeless.py does json loading and event is already a dict. 
+    # kubeless.py does json loading and event is already a dict
     # And bool('False') is True, which is weird
     # For those reasons, event['data']['cv'] is compared with str 'True'
+    # "kubeless function call <func-name> --data" injects data field to event dict
     
-    e = json.loads(event)
-    if e['data']['cv'] == 'True':
+    if event['data']['cv'] == 'True':
         kfold = KFold(n_splits=10, shuffle=True, random_state=123)
         results = cross_val_score(estimator, x, y, cv=kfold)
         accuracy = "Accuray: {0} ({1})".format(results.mean()*100, results.std()*100)
@@ -45,4 +45,5 @@ def baseline_model():
 
 
 if __name__ == "__main__":
-    print (handler('{"data":{"cv":"True"}}', {}))
+    print (handler({"data":{"cv":"True"}}, {}))
+    
