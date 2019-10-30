@@ -1,5 +1,4 @@
-/venv
-/venv2
+/venv*
 **/UECFOOD100
 *.db
 test.py
