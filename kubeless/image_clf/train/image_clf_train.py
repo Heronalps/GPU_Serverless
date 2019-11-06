@@ -70,7 +70,6 @@ def handler(event, context):
     # Increase BATCH_SIZE based on number of GPUs to harness the quasi-linear speedup of multiple GPUS
     BATCH_SIZE = 2 * NUM_GPU if NUM_GPU > 0 else 2
 
-
     # The total size of training dataset
     total_train_size = NUM_TRAIN_IMAGES_PER_EPOCH * NUM_EPOCHS
 
