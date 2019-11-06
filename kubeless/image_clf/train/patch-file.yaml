@@ -2,14 +2,7 @@ spec:
   template:
     spec:
       containers:
-      - name: iris37
-        resources: 
-          requests: 
-            memory: 8Gi                          
-            nvidia.com/gpu: 1
-          limits: 
-            memory: 32Gi
-            nvidia.com/gpu: 1
+      - name: image-clf-train
         volumeMounts:
         - mountPath: /racelab
           name: imageclf-ceph

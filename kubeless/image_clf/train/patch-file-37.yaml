@@ -2,7 +2,7 @@ spec:
   template:
     spec:
       containers:
-      - name: image-clf-train
+      - name: image-clf-train37
         resources: 
           requests: 
             memory: 8Gi                          
@@ -10,6 +10,11 @@ spec:
           limits: 
             memory: 32Gi
             nvidia.com/gpu: 1
-        volumeMounts: 
+        volumeMounts:
         - mountPath: /racelab
-          name: fs-store
+          name: imageclf-ceph
+      restartPolicy: Always
+      volumes:
+        - name: imageclf-ceph
+          persistentVolumeClaim:
+            claimName: imageclf-ceph

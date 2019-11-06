@@ -181,4 +181,4 @@ def train_model(model, train_data_gen, valid_data_gen, class_weight, batch_size)
 #     plt.savefig('/imageclf/charts/training_history.png')
 
 if __name__ == "__main__":
-    handler({"data" : {"img_per_epoch" : "144", "num_epoch": "10"}}, {})
+    handler({"data" : {"img_per_epoch" : "144", "num_epoch": "1"}}, {})

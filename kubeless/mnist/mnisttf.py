@@ -57,7 +57,7 @@ def handler(event, context):
     pred = model.predict(x_test[image_index].reshape(1, 28, 28, 1))
     print (pred.argmax())
 
-    print ("The total time used is {0} seconds".format(time.time() - start))
+    return "The total time used is {0} seconds".format(time.time() - start)
 
 if __name__ == "__main__":
     handler({}, {})

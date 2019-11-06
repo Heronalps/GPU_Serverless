@@ -2,7 +2,7 @@ spec:
   template:
     spec:
       containers:
-      - name: mnist-cnn
+      - name: mnist-tf37
         resources: 
           requests: 
             memory: 8Gi                          

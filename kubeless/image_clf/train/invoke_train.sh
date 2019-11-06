@@ -14,13 +14,20 @@
 
 # done
 
-for i in {0..9}
+# Iterate 10 times
+# for i in {0..9}
+
+# One time
+for i in {0}
 
 do
 IMG_PER_EPOCH=100
+EPOCHS=1
 #echo "$IMG_PER_EPOCH"
-DATA_STRING=$(jq -n --arg ipe "$IMG_PER_EPOCH" '{"img_per_epoch":$ipe}')
+DATA_STRING=$(jq -n --arg ipe "$IMG_PER_EPOCH" '{"img_per_epoch":$ipe}' --arg ep "$EPOCHS" '{"num_epoch":$ep}')
 #echo "$DATA_STRING"
 kubeless function call image-clf-train --data "$DATA_STRING"
+
+# kubeless function call image-clf-train37 --data "$DATA_STRING"
 
 done
