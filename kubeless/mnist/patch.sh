@@ -1,0 +1,1 @@
+kubectl patch deployment mnist-cnn --patch "$(cat patch-file.yaml)"

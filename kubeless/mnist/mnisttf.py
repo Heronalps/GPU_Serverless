@@ -5,10 +5,10 @@ import time
 from keras.models import Sequential
 from keras.layers import Dense, Conv2D, Dropout, Flatten, MaxPooling2D
 from keras import backend
+EPOCHS = 20
 
 def handler(event, context):
     # backend.tensorflow_backend._get_available_gpus()
-
     start = time.time()
 
     # x is grayscale code [0 - 255]
@@ -48,7 +48,7 @@ def handler(event, context):
     model.add(Dense(10, activation=tf.nn.softmax))
 
     model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
-    model.fit(x=x_train, y=y_train, epochs=10, verbose=0)
+    model.fit(x=x_train, y=y_train, epochs=EPOCHS, verbose=0)
 
     model.evaluate(x_test, y_test)
 
