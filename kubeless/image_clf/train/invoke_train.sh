@@ -21,13 +21,14 @@
 for i in {0}
 
 do
-IMG_PER_EPOCH=100
-EPOCHS=1
+IMG_PER_EPOCH=144
+EPOCHS=10
 #echo "$IMG_PER_EPOCH"
-DATA_STRING=$(jq -n --arg ipe "$IMG_PER_EPOCH" '{"img_per_epoch":$ipe}' --arg ep "$EPOCHS" '{"num_epoch":$ep}')
+DATA_STRING=$(jq -n --arg ipe "$IMG_PER_EPOCH" --arg ep "$EPOCHS" '{"img_per_epoch":$ipe, "num_epoch":$ep}')
 #echo "$DATA_STRING"
+echo "1 GPU"
 kubeless function call image-clf-train --data "$DATA_STRING"
-
+# echo "3 GPU"
 # kubeless function call image-clf-train37 --data "$DATA_STRING"
 
 done

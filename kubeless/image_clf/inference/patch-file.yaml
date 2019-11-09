@@ -3,6 +3,13 @@ spec:
     spec:
       containers:
       - name: image-clf-inf
+        resources: 
+          requests: 
+            memory: 16Gi      
+            nvidia.com/gpu: 1                    
+          limits: 
+            memory: 32Gi
+            nvidia.com/gpu: 1
         volumeMounts:
         - mountPath: /racelab
           name: imageclf-ceph

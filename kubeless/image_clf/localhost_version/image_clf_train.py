@@ -41,8 +41,7 @@ CLASS_LIST = ["Birds", "Empty", "Fox", "Humans", "Rodents"]
 FC_LAYERS = [1024, 1024]
 DROPOUT = 0.5
 
-def handler(event, context):
-    
+def handler(event, context):    
     if isinstance(event['data'], dict) and "img_per_epoch" in event['data']:
         global NUM_TRAIN_IMAGES_PER_EPOCH
         NUM_TRAIN_IMAGES_PER_EPOCH = int(event['data']['img_per_epoch'])
@@ -165,4 +164,4 @@ def train_model(model, train_data_gen, valid_data_gen, class_weight, batch_size)
 #     plt.savefig('/imageclf/charts/training_history.png')
 
 if __name__ == "__main__":
-    handler({"data" : {"img_per_epoch" : "100", "num_epoch": "10"}}, {})
+    handler({"data" : {"img_per_epoch" : "144", "num_epoch": "10"}}, {})

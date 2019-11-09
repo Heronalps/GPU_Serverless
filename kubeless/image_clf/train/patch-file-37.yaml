@@ -5,11 +5,11 @@ spec:
       - name: image-clf-train37
         resources: 
           requests: 
-            memory: 8Gi                          
-            nvidia.com/gpu: 1
+            memory: 16Gi                          
+            nvidia.com/gpu: 4
           limits: 
             memory: 32Gi
-            nvidia.com/gpu: 1
+            nvidia.com/gpu: 4
         volumeMounts:
         - mountPath: /racelab
           name: imageclf-ceph
