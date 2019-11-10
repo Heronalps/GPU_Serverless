@@ -68,7 +68,8 @@ def handler(event, context):
     print ("Current GPU num is {0}".format(NUM_GPU))
 
     # Increase BATCH_SIZE based on number of GPUs to harness the quasi-linear speedup of multiple GPUS
-    BATCH_SIZE = 2 * NUM_GPU if NUM_GPU > 0 else 2
+    # Each GPU takes 8 augmented images for training at one epoch
+    BATCH_SIZE = 8 * NUM_GPU if NUM_GPU > 0 else 8
 
     # The total size of training dataset
     total_train_size = NUM_TRAIN_IMAGES_PER_EPOCH * NUM_EPOCHS
@@ -84,7 +85,6 @@ def handler(event, context):
                                                         batch_size = BATCH_SIZE)
 
     if os.path.exists('/racelab/checkpoints/resnet50_model.h5'):
-        
         resnet50_model = ResNet50(input_shape=(WIDTH, HEIGHT, 3), weights='imagenet', include_top=False)
         # if an existing model in the Persistent Volume, start from it
         # resnet50_model = load_model('/racelab/checkpoints/resnet50_model.h5')
@@ -92,10 +92,11 @@ def handler(event, context):
         # If no existing model, download from remote
         resnet50_model = ResNet50(input_shape=(WIDTH, HEIGHT, 3), weights='imagenet', include_top=False)
 
-    if NUM_GPU > 1:
-        raw_model = multi_gpu_model(resnet50_model, gpus=NUM_GPU)
-    else:
-        raw_model = resnet50_model
+    try:
+        resnet50_model = multi_gpu_model(resnet50_model, gpus=NUM_GPU, cpu_relocation=True)
+        print ("Training with {0} GPUs".format(NUM_GPU))
+    except:
+        print ("Training with single CPU or GPU")
 
     # Build layered model
     layered_model = build_model(raw_model, dropout=DROPOUT, fc_layers=FC_LAYERS, num_classes=len(CLASS_LIST))
