@@ -1,6 +1,6 @@
-from keras.applications.resnet50 import preprocess_input
-from keras.preprocessing import image
-from keras.models import load_model
+from tensorflow.keras.applications.resnet50 import preprocess_input
+from tensorflow.keras.preprocessing import image
+from tensorflow.keras.models import load_model
 from tensorflow.python.client import device_lib
 import numpy as np
 import time
@@ -56,4 +56,4 @@ def handler(event, context):
     return ("Time with model loading: {0} Time without model loading {1} for {2} images.".format(time.time() - start1, time.time() - start2, NUM_IMAGE))
 
 if __name__ == "__main__":
-    handler({"data" : {"path" : "../../../../data/SantaCruzIsland_Validation_5Class/Birds", "num_image" : 10}}, {})
+    handler({"data" : {"num_image" : 10}}, {})

@@ -8,7 +8,6 @@ from keras import backend as K
 from keras.optimizers import SGD, Adam
 from keras.callbacks import ModelCheckpoint
 from keras.models import load_model
-# from matplotlib import pyplot as plt
 from tensorflow.python.client import device_lib
 from PIL import Image, ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
@@ -48,7 +47,6 @@ FC_LAYERS = [1024, 1024]
 DROPOUT = 0.5
 
 def handler(event, context):
-    
     if isinstance(event['data'], dict) and "img_per_epoch" in event['data']:
         global NUM_TRAIN_IMAGES_PER_EPOCH
         NUM_TRAIN_IMAGES_PER_EPOCH = int(event['data']['img_per_epoch'])
