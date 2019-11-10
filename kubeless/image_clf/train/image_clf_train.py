@@ -8,11 +8,12 @@ from keras import backend as K
 from keras.optimizers import SGD, Adam
 from keras.callbacks import ModelCheckpoint
 from keras.models import load_model
+# from matplotlib import pyplot as plt
 from tensorflow.python.client import device_lib
 from PIL import Image, ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 import numpy as np
-import time, os
+import time, os, math
 
 # from keras.backend.tensorflow_backend import set_session
 # import tensorflow as tf
@@ -27,14 +28,8 @@ MODEL_DIR = "/racelab/checkpoints/resnet50_model.h5"
 NUM_EPOCHS = 10
 WIDTH = 1920
 HEIGHT = 1080
-
-# Step per epoch cannot be less than batch size
-# Max batch size = 6 GPU * 8 = 48
-# NUM_TRAIN_IMAGES_PER_EPOCH = 48 * 49 = 2352
-MAX_GPU_NUM = 6
-INIT_BATCH_SIZE = 2
-NUM_TRAIN_IMAGES_PER_EPOCH = (MAX_GPU_NUM * INIT_BATCH_SIZE)**2
-NUM_VALID_IMAGES_PER_EPOCH = (MAX_GPU_NUM * INIT_BATCH_SIZE)**2
+NUM_TRAIN_IMAGES_PER_EPOCH = 100
+NUM_VALID_IMAGES_PER_EPOCH = 10
 
 NUM_BIRDS = 127
 NUM_EMPTY = 250
@@ -46,7 +41,7 @@ CLASS_LIST = ["Birds", "Empty", "Fox", "Humans", "Rodents"]
 FC_LAYERS = [1024, 1024]
 DROPOUT = 0.5
 
-def handler(event, context):
+def handler(event, context):    
     if isinstance(event['data'], dict) and "img_per_epoch" in event['data']:
         global NUM_TRAIN_IMAGES_PER_EPOCH
         NUM_TRAIN_IMAGES_PER_EPOCH = int(event['data']['img_per_epoch'])
@@ -63,11 +58,11 @@ def handler(event, context):
     # Parallel with multiple GPUs
     available_devices = device_lib.list_local_devices()
     NUM_GPU = len([x for x in available_devices if x.device_type == 'GPU'])
-    print ("Current GPU num is {0}".format(NUM_GPU))
 
     # Increase BATCH_SIZE based on number of GPUs to harness the quasi-linear speedup of multiple GPUS
     # Each GPU takes 8 augmented images for training at one epoch
     BATCH_SIZE = 8 * NUM_GPU if NUM_GPU > 0 else 8
+
 
     # The total size of training dataset
     total_train_size = NUM_TRAIN_IMAGES_PER_EPOCH * NUM_EPOCHS
@@ -82,14 +77,8 @@ def handler(event, context):
     valid_generator = valid_datagen.flow_from_directory(VALID_DIR, target_size=(WIDTH, HEIGHT), \
                                                         batch_size = BATCH_SIZE)
 
-    if os.path.exists('/racelab/checkpoints/resnet50_model.h5'):
-        resnet50_model = ResNet50(input_shape=(WIDTH, HEIGHT, 3), weights='imagenet', include_top=False)
-        # if an existing model in the Persistent Volume, start from it
-        # resnet50_model = load_model('/racelab/checkpoints/resnet50_model.h5')
-    else:
-        # If no existing model, download from remote
-        resnet50_model = ResNet50(input_shape=(WIDTH, HEIGHT, 3), weights='imagenet', include_top=False)
-
+    resnet50_model = ResNet50(input_shape=(WIDTH, HEIGHT, 3), weights='imagenet', include_top=False)
+    
     try:
         resnet50_model = multi_gpu_model(resnet50_model, gpus=NUM_GPU, cpu_relocation=True)
         print ("Training with {0} GPUs".format(NUM_GPU))
@@ -97,7 +86,7 @@ def handler(event, context):
         print ("Training with single CPU or GPU")
 
     # Build layered model
-    layered_model = build_model(raw_model, dropout=DROPOUT, fc_layers=FC_LAYERS, num_classes=len(CLASS_LIST))
+    layered_model = build_model(resnet50_model, dropout=DROPOUT, fc_layers=FC_LAYERS, num_classes=len(CLASS_LIST))
 
     start = time.time()
 
@@ -115,8 +104,7 @@ def handler(event, context):
 
 
 def build_model(base_model, dropout, fc_layers, num_classes):
-    
-    print ("Start building layered model...")
+
     # first: train only the top layers (which were randomly initialized)
     # i.e. freeze all convolutional InceptionV3 layers
     for layer in base_model.layers:
@@ -142,7 +130,6 @@ def build_model(base_model, dropout, fc_layers, num_classes):
 
 def train_model(model, train_data_gen, valid_data_gen, class_weight, batch_size):
 
-    print ("Start training model...")
     # create adam optimizer with learning rate
     adam = Adam(lr=0.00001)
 
@@ -179,4 +166,4 @@ def train_model(model, train_data_gen, valid_data_gen, class_weight, batch_size)
 #     plt.savefig('/imageclf/charts/training_history.png')
 
 if __name__ == "__main__":
-    handler({"data" : {"img_per_epoch" : "10", "num_epoch": "1"}}, {})
+    handler({"data" : {"img_per_epoch" : "144", "num_epoch": "10"}}, {})

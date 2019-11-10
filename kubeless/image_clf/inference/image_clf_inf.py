@@ -1,9 +1,9 @@
-from keras.applications.resnet50 import preprocess_input
-from keras.preprocessing import image
-from keras.models import load_model
-from python.client import device_lib
+from tensorflow.keras.applications.resnet50 import preprocess_input
+from tensorflow.keras.preprocessing import image
+from tensorflow.keras.models import load_model
+from tensorflow.python.client import device_lib
 import numpy as np
-import time
+import time, math
 
 class_list = ["Birds", "Empty", "Fox", "Humans", "Rodents"]
 NUM_IMAGE = 1
@@ -12,6 +12,7 @@ WIDTH = 1920
 HEIGHT = 1080
 
 # PATH = "/racelab/data/SantaCruzIsland_Validation_5Class/Birds/IMG_1304.JPG"
+
 
 def handler(event, context): 
     start1 = time.time()
@@ -30,7 +31,7 @@ def handler(event, context):
 
     # Increase BATCH_SIZE based on number of GPUs to harness the quasi-linear speedup of multiple GPUS
     # Each GPU takes 8 augmented images for training at one epoch
-    BATCH_SIZE = NUM_GPU * 8 if NUM_GPU > 0 else 8
+    BATCH_SIZE = 4 * NUM_GPU if NUM_GPU > 0 else 4
 
     inf_datagen = image.ImageDataGenerator(preprocessing_function=preprocess_input, rotation_range=90, \
                                            horizontal_flip=True, vertical_flip=True)
@@ -46,7 +47,8 @@ def handler(event, context):
     
     start2 = time.time()
     
-    y_pred = trained_model.predict_generator(inf_generator, steps = NUM_IMAGE // BATCH_SIZE, workers=8)
+    y_pred = trained_model.predict_generator(inf_generator, steps = math.ceil(NUM_IMAGE / BATCH_SIZE), workers=8)
+    print ("shape : ", y_pred.shape)
     # index = y_prob.argmax()
     # print ("index : ", index)
 

@@ -6,10 +6,10 @@ spec:
         resources: 
           requests: 
             memory: 16Gi                          
-            nvidia.com/gpu: 0
+            nvidia.com/gpu: 3
           limits: 
             memory: 32Gi
-            nvidia.com/gpu: 0
+            nvidia.com/gpu: 3
         volumeMounts:
         - mountPath: /racelab
           name: imageclf-ceph

@@ -4,14 +4,14 @@
 # for i in {0..9}
 
 # One time
-for i in {0}
+for i in {0..2}
 
 do
-NUM_IMAGE=100
+NUM_IMAGE=$(echo "10^$i" | bc)
 
 DATA_STRING=$(jq -n --arg ni "$NUM_IMAGE" '{"num_image":$ni}')
+echo $DATA_STRING
 
-#echo "$DATA_STRING"
 echo "36"
 kubeless function call image-clf-inf --data "$DATA_STRING"
 # echo "37"
