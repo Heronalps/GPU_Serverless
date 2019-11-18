@@ -25,6 +25,8 @@ while not connected:
         print (e)
         break
 
+time_stamp = time.time()
+
 file_name = client_socket.recv(size).decode()
 print (f'file_name : {file_name}')
 zip_name = folder + file_name
@@ -42,4 +44,5 @@ with zipfile.ZipFile(zip_name, 'r') as f:
 
 os.remove(zip_name)
 client_socket.close()
+print (f'The client received and extracted all images by {time.time() - time_stamp} seconds! ')
 exit()

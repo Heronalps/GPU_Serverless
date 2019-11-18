@@ -24,6 +24,7 @@ server_socket.listen(5)
 client_socket, address = server_socket.accept()
 print ("Conencted to - ",address,"\n")
 
+time_stamp = time.time()
 while True:
     files = os.listdir(folder)
     images = [img for img in files if img.endswith('.JPG')]
@@ -46,4 +47,5 @@ while True:
     
     print ("All data is sent successfully!")
     server_socket.close()
+    print (f'The server transfers {len(images)} images by {time.time() - time_stamp} seconds! ')
     exit()
