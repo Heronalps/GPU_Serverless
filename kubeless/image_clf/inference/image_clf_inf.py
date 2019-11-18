@@ -30,8 +30,8 @@ def handler(event, context):
     print ("Current GPU num is {0}".format(NUM_GPU))
 
     # Increase BATCH_SIZE based on number of GPUs to harness the quasi-linear speedup of multiple GPUS
-    # Each GPU takes 8 augmented images for training at one epoch
-    BATCH_SIZE = 4 * NUM_GPU if NUM_GPU > 0 else 4
+    # Each GPU takes 2 augmented images for training at one epoch
+    BATCH_SIZE = 2 * NUM_GPU if NUM_GPU > 0 else 2
 
     inf_datagen = image.ImageDataGenerator(preprocessing_function=preprocess_input, rotation_range=90, \
                                            horizontal_flip=True, vertical_flip=True)

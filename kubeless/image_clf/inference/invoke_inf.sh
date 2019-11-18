@@ -4,10 +4,10 @@
 # for i in {0..9}
 
 # One time
-for i in {0..2}
+for i in {1..10}
 
 do
-NUM_IMAGE=$(echo "10^$i" | bc)
+NUM_IMAGE=$(echo "$i*10" | bc)
 
 DATA_STRING=$(jq -n --arg ni "$NUM_IMAGE" '{"num_image":$ni}')
 echo $DATA_STRING
