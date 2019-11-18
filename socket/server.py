@@ -4,6 +4,7 @@ The Raspberry Pi that sends batch of images to data center
 import os, sys, time, socket, zipfile
 
 # Constants
+server_ip = '192.168.0.102'
 port = 5005
 size = 1024
 folder = '/Users/michaelzhang/Downloads/Github/GPU_Serverless/data/SantaCruzIsland_Labeled_5Class/Birds/test_image/'
@@ -14,7 +15,7 @@ server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 while not connected:
     try:
-        server_socket.bind((socket.gethostname(), port))
+        server_socket.bind(('', port))
         connected = True
         print ('port : {0}'.format(port))
     except:

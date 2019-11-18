@@ -3,6 +3,7 @@ The data center client requests images from Raspberry Pi
 '''
 import socket, os, time, zipfile, re
 
+server_ip = '192.168.0.102'
 size = 1024
 port = 5005
 folder = "/Users/michaelzhang/Downloads/image_buffer/"
@@ -12,7 +13,7 @@ connected = False
 
 while not connected:
     try:
-        client_socket.connect((socket.gethostname(), port))
+        client_socket.connect((server_ip, port))
         print ('port : {0}'.format(port))
         print ("Connected successfully!")
         connected = True
