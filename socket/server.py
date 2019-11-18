@@ -16,7 +16,7 @@ while not connected:
     try:
         server_socket.bind((socket.gethostname(), port))
         connected = True
-        print (f'port : {port}')
+        print ('port : {0}'.format(port))
     except:
         port += 1
 server_socket.listen(5)
@@ -28,14 +28,14 @@ time_stamp = time.time()
 while True:
     files = os.listdir(folder)
     images = [img for img in files if img.endswith('.JPG')]
-    print (f'images : {images}')
+    print ('images : {0}'.format(images))
     # Send all .jpg files in the folder from server to client
     with zipfile.ZipFile(zip_name, 'w') as fp:
         for img in images:
-            print (f'image : {img}')
+            print ('image : {0}'.format(img))
             # Second arg is to specifiy the directory in zip file
             fp.write(folder + img, "images/" + img)
-            print (f'{img} is zipped successfully !')
+            print ('{0} is zipped successfully !'.format(img))
     
     client_socket.send(zip_name.encode())
 
@@ -47,5 +47,5 @@ while True:
     
     print ("All data is sent successfully!")
     server_socket.close()
-    print (f'The server transfers {len(images)} images by {time.time() - time_stamp} seconds! ')
+    print ('The server transfers {0} images by {1} seconds! '.format(len(images), time.time() - time_stamp))
     exit()

@@ -13,13 +13,13 @@ connected = False
 while not connected:
     try:
         client_socket.connect((socket.gethostname(), port))
-        print (f'port : {port}')
+        print ('port : {0}'.format(port))
         print ("Connected successfully!")
         connected = True
     except ConnectionRefusedError as err:
         client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         port += 1
-        print (f"Increment port : {port}")
+        print ("Increment port : {0}".format(port))
         time.sleep(1)
     except OSError as e:
         print (e)
@@ -28,7 +28,7 @@ while not connected:
 time_stamp = time.time()
 
 file_name = client_socket.recv(size).decode()
-print (f'file_name : {file_name}')
+print ('file_name : {}'.format(file_name))
 zip_name = folder + file_name
 with open(zip_name, 'wb+') as fp:
     while True:
@@ -44,5 +44,5 @@ with zipfile.ZipFile(zip_name, 'r') as f:
 
 os.remove(zip_name)
 client_socket.close()
-print (f'The client received and extracted all images by {time.time() - time_stamp} seconds! ')
+print ('The client received and extracted all images by {0} seconds! '.format(time.time() - time_stamp))
 exit()
