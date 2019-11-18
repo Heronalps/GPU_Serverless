@@ -1,0 +1,1 @@
+kubectl patch deployment image-clf-inf37 --patch "$(cat patch-file-37.yaml)"

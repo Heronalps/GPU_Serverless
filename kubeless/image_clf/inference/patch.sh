@@ -1,0 +1,1 @@
+kubectl patch deployment image-clf-inf --patch "$(cat patch-file.yaml)"

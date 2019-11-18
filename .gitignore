@@ -1,8 +1,7 @@
-/venv
-/venv2
+/venv*
 **/UECFOOD100
 *.db
-test.py
+test.*
 .vscode
 *.out
 .DS_Store

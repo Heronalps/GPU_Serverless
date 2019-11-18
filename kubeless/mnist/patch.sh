@@ -1,0 +1,1 @@
+kubectl patch deployment mnist-tf37 --patch "$(cat patch-file.yaml)"

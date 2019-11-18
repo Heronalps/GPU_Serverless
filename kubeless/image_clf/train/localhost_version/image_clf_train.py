@@ -21,9 +21,9 @@ import time, os
 # config.gpu_options.allow_growth = True  # dynamically grow the memory used on the GPU
 # config.log_device_placement = True  # to log device placement (on which device the operation ran)
 
-TRAIN_DIR = "../../../data/SantaCruzIsland_Labeled_5Class"
-VALID_DIR = "../../../data/SantaCruzIsland_Validation_5Class"
-MODEL_DIR = "../../../checkpoints/resnet50_model.h5"
+TRAIN_DIR = "../../../../data/SantaCruzIsland_Labeled_5Class"
+VALID_DIR = "../../../../data/SantaCruzIsland_Validation_5Class"
+MODEL_DIR = "../../../../checkpoints/resnet50_model.h5"
 
 NUM_EPOCHS = 10
 WIDTH = 1920
@@ -41,8 +41,7 @@ CLASS_LIST = ["Birds", "Empty", "Fox", "Humans", "Rodents"]
 FC_LAYERS = [1024, 1024]
 DROPOUT = 0.5
 
-def handler(event, context):
-    
+def handler(event, context):    
     if isinstance(event['data'], dict) and "img_per_epoch" in event['data']:
         global NUM_TRAIN_IMAGES_PER_EPOCH
         NUM_TRAIN_IMAGES_PER_EPOCH = int(event['data']['img_per_epoch'])
@@ -61,6 +60,7 @@ def handler(event, context):
     NUM_GPU = len([x for x in available_devices if x.device_type == 'GPU'])
 
     # Increase BATCH_SIZE based on number of GPUs to harness the quasi-linear speedup of multiple GPUS
+    # Each GPU takes 8 augmented images for training at one epoch
     BATCH_SIZE = 8 * NUM_GPU if NUM_GPU > 0 else 8
 
 
@@ -79,13 +79,14 @@ def handler(event, context):
 
     resnet50_model = ResNet50(input_shape=(WIDTH, HEIGHT, 3), weights='imagenet', include_top=False)
     
-    if NUM_GPU > 1:
-        raw_model = multi_gpu_model(resnet50_model, gpus=NUM_GPU)
-    else:
-        raw_model = resnet50_model
+    try:
+        resnet50_model = multi_gpu_model(resnet50_model, gpus=NUM_GPU, cpu_relocation=True)
+        print ("Training with {0} GPUs".format(NUM_GPU))
+    except:
+        print ("Training with single CPU or GPU")
 
     # Build layered model
-    layered_model = build_model(raw_model, dropout=DROPOUT, fc_layers=FC_LAYERS, num_classes=len(CLASS_LIST))
+    layered_model = build_model(resnet50_model, dropout=DROPOUT, fc_layers=FC_LAYERS, num_classes=len(CLASS_LIST))
 
     start = time.time()
 
@@ -165,4 +166,4 @@ def train_model(model, train_data_gen, valid_data_gen, class_weight, batch_size)
 #     plt.savefig('/imageclf/charts/training_history.png')
 
 if __name__ == "__main__":
-    handler({"data" : {"img_per_epoch" : "10", "num_epoch": "10"}}, {})
+    handler({"data" : {"img_per_epoch" : "144", "num_epoch": "10"}}, {})
