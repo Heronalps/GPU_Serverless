@@ -7,7 +7,7 @@ from pathlib import Path
 server_ip = '127.0.0.1'
 size = 1024
 port = 5005
-folder = Path.home() / "Downloads/image_buffer/"
+folder = Path.home() / "GPU_Serverless/image_buffer/"
 
 
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
