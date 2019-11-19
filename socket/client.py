@@ -2,11 +2,13 @@
 The data center client requests images from Raspberry Pi
 '''
 import socket, os, time, zipfile, re
+from pathlib import Path
 
-server_ip = '192.168.0.102'
+server_ip = '127.0.0.1'
 size = 1024
 port = 5005
-folder = "/Users/michaelzhang/Downloads/image_buffer/"
+folder = Path.home() / "Downloads/image_buffer/"
+
 
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 connected = False
@@ -30,7 +32,7 @@ time_stamp = time.time()
 
 file_name = client_socket.recv(size).decode()
 print ('file_name : {}'.format(file_name))
-zip_name = folder + file_name
+zip_name = str(folder) + '/' + file_name
 with open(zip_name, 'wb+') as fp:
     while True:
         strng = client_socket.recv(size)
@@ -42,7 +44,7 @@ print ("Data Received successfully")
 
 with zipfile.ZipFile(zip_name, 'r') as f:
     f.extractall(folder)
-
+print ("zip_name : ", zip_name)
 os.remove(zip_name)
 client_socket.close()
 print ('The client received and extracted all images by {0} seconds! '.format(time.time() - time_stamp))
