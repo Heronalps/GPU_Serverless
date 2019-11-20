@@ -3,15 +3,15 @@ from tensorflow.keras.preprocessing import image
 from tensorflow.keras.models import load_model
 from tensorflow.python.client import device_lib
 import numpy as np
-import time, math
+import time, math, os
 
 class_list = ["Birds", "Empty", "Fox", "Humans", "Rodents"]
 NUM_IMAGE = 1
-INF_DIR = "/racelab/SantaCruzIsland_Validation_5Class"
+INF_DIR = "/racelab/SantaCruzIsland_Labeled_5Class/Birds"
 WIDTH = 1920
 HEIGHT = 1080
 
-# PATH = "/racelab/data/SantaCruzIsland_Validation_5Class/Birds/IMG_1304.JPG"
+# PATH = "/racelab/data/SantaCruzIsland_Validation_5Class/Birds"
 
 
 def handler(event, context): 
@@ -31,24 +31,33 @@ def handler(event, context):
 
     # Increase BATCH_SIZE based on number of GPUs to harness the quasi-linear speedup of multiple GPUS
     # Each GPU takes 2 augmented images for training at one epoch
+    
+    # BATCH_SIZE = 1
+    # inf_datagen = image.ImageDataGenerator(preprocessing_function=preprocess_input, rotation_range=90, \
+    #                                        horizontal_flip=True, vertical_flip=True)
+    # inf_generator = inf_datagen.flow_from_directory(INF_DIR, target_size=(WIDTH, HEIGHT), \
+    #                                                 batch_size = BATCH_SIZE)
+    
     BATCH_SIZE = 2 * NUM_GPU if NUM_GPU > 0 else 2
-
-    inf_datagen = image.ImageDataGenerator(preprocessing_function=preprocess_input, rotation_range=90, \
-                                           horizontal_flip=True, vertical_flip=True)
-    inf_generator = inf_datagen.flow_from_directory(INF_DIR, target_size=(WIDTH, HEIGHT), \
-                                                    batch_size = BATCH_SIZE)
-
-    # img = image.load_img(path=PATH, target_size=(1920, 1080))
-    # x = image.img_to_array(img)
-    # x = np.expand_dims(x, axis=0)
-    # x = preprocess_input(x)
-
     trained_model = load_model('/racelab/checkpoints/resnet50_model.h5')
-    
+
     start2 = time.time()
-    
-    y_pred = trained_model.predict_generator(inf_generator, steps = math.ceil(NUM_IMAGE / BATCH_SIZE), workers=8)
-    print ("shape : ", y_pred.shape)
+    counter = 0
+    for img in os.listdir(INF_DIR):
+        PATH = INF_DIR + '/' + img
+        img = image.load_img(path=PATH, target_size=(1920, 1080))
+        x = image.img_to_array(img)
+        x = np.expand_dims(x, axis=0)
+        x = preprocess_input(x)
+        y_prob = trained_model.predict(x)
+        index = y_prob.argmax()
+        counter += 1
+        if counter == NUM_IMAGE:
+            break
+        print ("image : {0}, index : {1}".format(PATH, index))
+
+    # y_pred = trained_model.predict_generator(inf_generator, steps = math.ceil(NUM_IMAGE / BATCH_SIZE), workers=8)
+    # print ("shape : ", y_pred.shape)
     # index = y_prob.argmax()
     # print ("index : ", index)
 
