@@ -3,7 +3,7 @@ from tensorflow.keras.preprocessing import image
 from tensorflow.keras.models import load_model
 from tensorflow.python.client import device_lib
 import numpy as np
-import time, math, os
+import time, math, os, argparse
 
 class_list = ["Birds", "Empty", "Fox", "Humans", "Rodents"]
 NUM_IMAGE = 10
@@ -63,6 +63,7 @@ def handler(event, context):
     return ("Time with model loading: {0} Time without model loading {1} for {2} images.".format(time.time() - start1, time.time() - start2, NUM_IMAGE))
 
 if __name__ == "__main__":
-    handler({"data" : {"num_image" : 1}}, {})
-    for i in range (10):
-        handler({"data" : {"num_image" : i * 10}}, {})
+    parser = argparse.ArgumentParser()
+    parser.add_argument("num_image")
+    args = parser.parse_args()
+    handler({"data" : {"num_image" : args.num_image}}, {})

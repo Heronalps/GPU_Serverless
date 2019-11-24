@@ -4,6 +4,7 @@ from tensorflow.keras.models import load_model
 from tensorflow.python.client import device_lib
 import numpy as np
 import time, math, os
+import argparse
 
 class_list = ["Birds", "Empty", "Fox", "Humans", "Rodents"]
 NUM_IMAGE = 1
