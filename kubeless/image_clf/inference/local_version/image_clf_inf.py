@@ -7,12 +7,12 @@ import time, math, os, argparse
 
 class_list = ["Birds", "Empty", "Fox", "Humans", "Rodents"]
 NUM_IMAGE = 10
-INF_DIR = "../../../../data/SantaCruzIsland_Labeled_5Class/Birds"
+HOME = os.getenv("HOME")
+INF_DIR = HOME + "/GPU_Serverless/data/SantaCruzIsland_Labeled_5Class/Birds"
 WIDTH = 1920
 HEIGHT = 1080
 
 # PATH = "/racelab/data/SantaCruzIsland_Validation_5Class/Birds/IMG_1304.JPG"
-
 
 def handler(event, context): 
     start1 = time.time()
@@ -38,7 +38,7 @@ def handler(event, context):
     # inf_generator = inf_datagen.flow_from_directory(INF_DIR, target_size=(WIDTH, HEIGHT), \
     #                                                 batch_size = BATCH_SIZE)
     
-    trained_model = load_model('../../../../checkpoints/resnet50_model.h5')
+    trained_model = load_model(HOME + '/GPU_Serverless/checkpoints/resnet50_model.h5')
     counter = 0
     start2 = time.time()
 
