@@ -50,10 +50,10 @@ def handler(event, context):
         x = preprocess_input(x)
         y_prob = trained_model.predict(x)
         index = y_prob.argmax()
+        print ("image : {0}, index : {1}".format(PATH, index))
         counter += 1
         if counter == NUM_IMAGE:
             break
-        print ("image : {0}, index : {1}".format(PATH, index))
     
     # y_pred = trained_model.predict_generator(inf_generator, steps = math.ceil(NUM_IMAGE / BATCH_SIZE), workers=8)
     # print ("shape : ", y_pred.shape)
