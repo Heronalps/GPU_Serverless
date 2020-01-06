@@ -5,10 +5,10 @@ spec:
       - name: image-clf-inf
         resources: 
           requests: 
-            memory: 16Gi      
+            memory: 32Gi      
             nvidia.com/gpu: 0
           limits: 
-            memory: 32Gi
+            memory: 64Gi
             nvidia.com/gpu: 0
         volumeMounts:
         - mountPath: /racelab
