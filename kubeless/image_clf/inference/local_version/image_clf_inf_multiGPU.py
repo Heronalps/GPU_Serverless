@@ -1,10 +1,7 @@
-from tensorflow.keras.applications.resnet50 import preprocess_input
-from tensorflow.keras.preprocessing import image
-from tensorflow.keras.models import load_model
-from tensorflow.python.client import device_lib
 from multiprocessing import Process, Queue
 import numpy as np
 import time, math, os, argparse
+from gpuinfo import GPUInfo
 
 class_list = ["Birds", "Empty", "Fox", "Humans", "Rodents"]
 NUM_IMAGE = 10
@@ -49,7 +46,10 @@ class Worker(Process):
         #set enviornment
         os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
         os.environ["CUDA_VISIBLE_DEVICES"] = str(self._gpuid)
-
+        from tensorflow.keras.applications.resnet50 import preprocess_input
+        from tensorflow.keras.preprocessing import image
+        from tensorflow.keras.models import load_model
+        
         trained_model = load_model(HOME + '/GPU_Serverless/checkpoints/resnet50_model.h5')
 
         while True:
@@ -68,6 +68,10 @@ class Worker(Process):
         print("GPU {} has done inferencing...".format(self._gpuid))
 
 def run_sequential(image_list):
+    from tensorflow.keras.applications.resnet50 import preprocess_input
+    from tensorflow.keras.preprocessing import image
+    from tensorflow.keras.models import load_model
+
     trained_model = load_model(HOME + '/GPU_Serverless/checkpoints/resnet50_model.h5')
     for img_path in image_list:
         img = image.load_img(path=img_path, target_size=(1920, 1080))
@@ -87,8 +91,8 @@ def handler(event, context):
         NUM_IMAGE = int(event['data']['num_image'])
     
     # Parallel with multiple GPUs
-    available_devices = device_lib.list_local_devices()
-    NUM_GPU = len([x for x in available_devices if x.device_type == 'GPU'])
+    available_devices = GPUInfo.check_empty()
+    NUM_GPU = len(available_devices)
     print ("Current GPU num is {0}".format(NUM_GPU))
     
     counter = 0
