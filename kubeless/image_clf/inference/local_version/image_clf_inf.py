@@ -116,7 +116,7 @@ def handler(event, context):
         scheduler.start(image_list)
         
     end = time.time()
-    # print ("Time with model loading {0} for {1} images.".format(end - start, NUM_IMAGE))
+    print ("Time with model loading {0} for {1} images.".format(end - start, NUM_IMAGE))
     return ("Time with model loading {0} for {1} images.".format(end - start, NUM_IMAGE))
 
 if __name__ == "__main__":
